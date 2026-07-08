@@ -70,7 +70,7 @@ export default function Chat() {
                   return <p key={index} className="text-sm leading-relaxed whitespace-pre-wrap">{part.text}</p>;
                 }
 
-                if (part.type === 'tool-checkOrderStatus') {
+                if (part.type === 'tool-invocation') {
                   if (part.state !== 'output-available') {
                     return (
                       <div key={index} className="mt-4 flex items-center gap-3 text-sky-400 text-xs font-mono bg-sky-950/20 p-3 rounded-lg border border-sky-900/30">
