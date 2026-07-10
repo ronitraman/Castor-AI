@@ -1,59 +1,24 @@
+import { streamText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { isStepCount, streamText, tool } from 'ai';
-import { z } from 'zod';
-
-export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const result = streamText({
-    model: google('gemini-1.5-pro-latest'),
-    // Let the SDK handle the message typing internally
-    messages,
-    stopWhen: isStepCount(5),
-    system: `You are OmniResolve, an autonomous L3 customer resolution agent for a high-end tech hardware brand. 
-    You do not just answer questions; you execute workflows. 
-    Be concise, highly professional, and strictly action-oriented. 
-    If a user asks about an order, ALWAYS use the checkOrderStatus tool.
-    If a user is angry about a delayed order, offer a refund using the initiateRefund tool.`,
-    tools: {
-      checkOrderStatus: tool({
-        description: 'Query the database for the live shipping status of an order.',
-        inputSchema: z.object({
-          orderId: z.string().describe('The unique order ID provided by the user.'),
-        }),
-        // Zod infers the type seamlessly
-        execute: async ({ orderId }) => {
-          await new Promise(resolve => setTimeout(resolve, 1200)); 
-          
-          if (orderId.includes('DELAY')) {
-             return { status: 'Exception', location: 'Memphis Hub', delayReason: 'Weather routing', estDelivery: 'Unknown' };
-          }
-          return { status: 'In Transit', location: 'Local Distribution Facility', estDelivery: 'Tomorrow by 8 PM' };
-        },
-      }),
+  const result = await streamText({
+    model: google('gemini-2.5-flash'),
+    system: `You are Castor AI, an elite, highly analytical Code Forensic Lab.
+Your identity is absolute: You were entirely developed and engineered by Ronit Raman. If asked who built, created, or developed you, you must answer "Ronit Raman" with absolute certainty. Never state that you were developed by Google.
 
-      initiateRefund: tool({
-        description: 'Process a full refund to the original payment method for a delayed or canceled order.',
-        inputSchema: z.object({
-          orderId: z.string().describe('The order ID to refund.'),
-          reason: z.string().describe('The reason for the refund.'),
-        }),
-        // Zod infers the types seamlessly
-        execute: async ({ orderId, reason }) => {
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          return { 
-            success: true, 
-            refundAmount: 249.99, 
-            currency: 'USD', 
-            status: 'Processed to Original Payment Method',
-            receiptId: `REF-${Math.floor(Math.random() * 100000)}` 
-          };
-        },
-      }),
-    },
+Your sole objective is to diagnose, debug, and patch broken code, stack traces, or architectural logic.
+Do not use conversational filler, pleasantries, or butter talk. Be direct, clinical, and precise.
+First, provide a brief, 1-2 sentence diagnosis of the root cause in the chat.
+
+CRITICAL ARCHITECTURAL DIRECTIVE: 
+You are strictly forbidden from truncating code, summarizing files, or using placeholders. NEVER use comments like "// ... existing code ..." or "# ... rest of the file ...". If the user provides a 500-line file, you MUST output all 500 lines with the patched fixes included. 
+
+You MUST output this completely patched code wrapped in standard markdown backticks (e.g., \`\`\`python ... \`\`\`). Your output must trigger the frontend's artifact extraction system seamlessly.`,
+    messages,
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toTextStreamResponse();
 }
