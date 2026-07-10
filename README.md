@@ -18,5 +18,4 @@ Castor AI integrates a powerful execution console with a live workspace sandbox,
 ## System Architecture
 
 - **Edge Streaming Pipeline:** AI responses are streamed dynamically via Vercel's Edge network, neutralizing standard serverless timeouts for heavy code generation tasks.
-- **Responsive Workspace:** The interface utilizes mobile-first fluid design architecture, scaling seamlessly from mobile viewports up to full desktop layouts without layout fragmentation.
 - **Secure Vault:** API authentication is handled securely server-side, completely obfuscating core engine keys from the client layer.
