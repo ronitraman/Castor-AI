@@ -291,7 +291,7 @@ export default function Chat() {
               <div className="mt-2 space-y-1">
                 <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium bg-zinc-900/30 text-zinc-400 border border-zinc-850 transition-all cursor-default">
                   <Cpu className="w-3.5 h-3.5" />
-                  Gemini 2.5 Flash
+                  Gemini 3.5 Flash
                 </button>
               </div>
             </div>
